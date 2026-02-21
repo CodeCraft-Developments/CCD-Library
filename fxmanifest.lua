@@ -17,7 +17,7 @@ client_script {
     'bridge/target/client.lua',
     'bridge/coreobj/client.lua',
     'bridge/inventory/client.lua',
-    'bridge/keys/client.lua'
+    'bridge/keys/client.lua',
 }
 
 server_script {

@@ -23,9 +23,9 @@ Config.Banner = [[
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ]]
 
-Config.CoreObj = "auto" -- qbcore, qbx_core or auto
+Config.CoreObj = "auto" -- qbcore, qbx_core, ESX or auto
 
-Config.Inventory = "auto" -- ox_inventory, qb-inventory, ps-inventory or auto
+Config.Inventory = "auto" -- ox_inventory, qb-inventory, esx_inventory, ps-inventory or auto
 
 Config.Target = "auto" -- ox_target, qb-target or auto
 

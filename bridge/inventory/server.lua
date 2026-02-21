@@ -1,4 +1,5 @@
 local Inventory
+local ESX
 codecraft_lib = {}
 
 local function InventoryNotSetup()
@@ -15,6 +16,8 @@ if Config.Inventory == "auto" then
         Inventory = exports['qb-inventory']
     elseif GetResourceState('ps-inventory') == 'started' then
         Inventory = exports['ps-inventory']
+    elseif GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
+        Inventory = ESX
     else
         InventoryNotSetup()
     end
@@ -24,26 +27,41 @@ elseif Config.Inventory == "qb-inventory" then
     Inventory = exports['qb-inventory']
 elseif Config.Inventory == "ps-inventory" then
     Inventory = exports['ps-inventory']
+elseif GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
+    Inventory = ESX
 else
-    InventoryNotSetup()   
+    InventoryNotSetup()
 end
 if Config.Debug then print("SERVER PRINT INVENTORY "..json.encode(Inventory).."^2 If its a empty [] then its correct ^0") end
 
 
 function codecraft_lib.AddItem(src, item, amount, metadata, slot, cb)
     if Config.Debug then print("codecraft_lib.AddItem() "..src, item, amount, metadata, slot, cb) end
-    return Inventory:AddItem(src, item, amount, metadata, slot, cb)
+    if GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
+        local xPlayer = Inventory.GetPlayerFromId(src)
+        return xPlayer.addInventoryItem(item, amount) 
+    else
+        return Inventory:AddItem(src, item, amount, metadata, slot, cb)
+    end
 end
 
 function codecraft_lib.RemoveItem(src, item, amount)
     if Config.Debug then print("codecraft_lib.RemoveItem() "..src, item, amount) end
-    return Inventory:Removeitem(src, item, amount)
+    if GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
+        local xPlayer = Inventory.GetPlayerFromId(src)
+        return xPlayer.removeInventoryItem(item, amount) 
+    else
+        return Inventory:Removeitem(src, item, amount)
+    end
 end
 
 function codecraft_lib.HasItem(src, item, amount)
     if Config.Debug then print("codecraft_lib.HasItem() "..src, item, amount) end
     if GetResourceState('ox_inventory') == 'started' then 
         return Inventory:GetItemCount(src, item, amount)
+    elseif GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
+        local xPlayer = Inventory.GetPlayerFromId(src)
+        return xPlayer.getInventoryItem(item)
     else
         return Inventory:HasItem(src, item, amount)
     end

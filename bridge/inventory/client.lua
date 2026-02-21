@@ -1,4 +1,5 @@
 local Inventory
+local ESX
 codecraft_lib = {}
 
 local function InventoryNotSetup()
@@ -15,6 +16,8 @@ if Config.Inventory == "auto" then
         Inventory = exports['qb-inventory']
     elseif GetResourceState('ps-inventory') == 'started' then
         Inventory = exports['ps-inventory']
+    elseif GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
+        Inventory = ESX
     else
         InventoryNotSetup()
     end
@@ -24,9 +27,12 @@ elseif Config.Inventory == "qb-inventory" then
     Inventory = exports['qb-inventory']
 elseif Config.Inventory == "ps-inventory" then
     Inventory = exports['ps-inventory']
+elseif GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
+    Inventory = ESX
 else
-    InventoryNotSetup()   
+    InventoryNotSetup()
 end
+
 if Config.Debug then print("CLIENT PRINT INVENTORY "..json.encode(Inventory).."^2 If its a empty [] then its correct ^0") end
 
 
