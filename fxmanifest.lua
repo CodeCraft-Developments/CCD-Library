@@ -2,7 +2,7 @@ fx_version 'cerulean'
 game 'gta5'
 lua54 'yes'
 
-name "CCD-Library"
+name "CCD_Library"
 author "CodeCraft Developments"
 version "1.0.0"
 description  "A library of functions and a bridge for CodeCraft Developments scripts"
@@ -13,7 +13,7 @@ shared_script {
 }
 
 client_script {
-    'client/*.lua',
+    'client/main.lua',
     'bridge/target/client.lua',
     'bridge/coreobj/client.lua',
     'bridge/inventory/client.lua',
@@ -21,7 +21,8 @@ client_script {
 }
 
 server_script {
-    'server/*.lua',
+    'server/main.lua',
+    'server/versionchecker.lua',
     'bridge/inventory/server.lua',
     'bridge/coreobj/server.lua',
     'bridge/keys/server.lua',

@@ -4,24 +4,46 @@
 
 ## Make sure you import all the functions using
 
-- `local codecraft_lib = exports['CCD-Library']:import()` at the top of your client and server scripts
+- `local codecraft_lib = exports.CCD_Library:import()` at the top of your client and server scripts
 
 ## CoreObj Client
 
 - `codecraft_lib.Notify(msg, type, duration)`
-- `codecraft_lib.GetPlayerGroups(jobname, gangname)`
+- `codecraft_lib.GetPlayerData()`
+- `codecraft_lib.GetPlayerJob()`
+- `codecraft_lib.GetPlayerJobName()`
+- `codecraft_lib.IsJobBoss()`
+- `codecraft_lib.GetPlayerGang()`
+- `codecraft_lib.IsGangLeader()`
+- `codecraft_lib.GetMetadata(meta)` Example: codecraft_lib.GetMetadata('isdead')
+- `codecraft_lib.GetIdentifier()` Returns CitizenID
+- `codecraft_lib.GetPlayer()` Returns PlayerPedID
+- `codecraft_lib.GetIdentifierCID()`
+- `codecraft_lib.isDead()`
+- `codecraft_lib.getCoords()`
 
 ## CoreObj Server
 
-- `codecraft_lib.GetUserID(source)`
-- `codecraft_lib.GetPlayerData(source)`
+- `codecraft_lib.Notify(source, msg, type, duration)`
+- `codecraft_lib.GetPlayer(source)`
+- `codecraft_lib.GetPlayerData()`
+- `codecraft_lib.getAllPlayers()`
+- `codecraft_lib.GetPlayerJob(source)`
+- `codecraft_lib.GetPlayerJobName(source)`
+- `codecraft_lib.GetPlayerGang(source)`
+- `codecraft_lib.isBoss(source)`
+- `codecraft_lib.getPlayerCoords(source)`
+- `codecraft_lib.getJobDuty(source)`
+- `codecraft_lib.checkDistance(source, location, distance)`
 - `codecraft_lib.GetMetaData(source, metadataname)`
 - `codecraft_lib.SetMetadata(source, metadata, value)`
 - `codecraft_lib.GetIdentifierCID(source)`
 - `codecraft_lib.GetJobCount(source, job, amount)`
-- `codecraft_lib.hasJob(source, job)`
+- `codecraft_lib.hasJob(source)`
 - `codecraft_lib.AddMoney(source, moneytype, amount)`
 - `codecraft_lib.RemoveMoney(source, moneytype, amount)`
+- `codecraft_lib.getMoney(source, type)`
+- `codecraft_lib.vehicleOwner(licensePlate)` Returns CitizenID of vehicle owner
 
 ## Inventory Client
 

@@ -29,6 +29,6 @@ Config.Inventory = "auto" -- ox_inventory, qb-inventory, esx_inventory, ps-inven
 
 Config.Target = "auto" -- ox_target, qb-target or auto
 
-Config.VehicleKeys = "auto" -- qb-vehiclekeys, qbx_vehiclekeys, Renewed-VehicleKeys, wasabi_carlock or auto
+Config.VehicleKeys = "auto" -- qb-vehiclekeys, qbx_vehiclekeys, Renewed-VehicleKeys, wasabi_carlock, jaksam_vehiclekeys or auto
 
-Config.Debug = true -- set to true if you want debug prints to be sent to the client and server
+Config.Debug = false -- set to true if you want debug prints to be sent to the client and server

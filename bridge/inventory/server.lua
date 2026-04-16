@@ -1,6 +1,6 @@
 local Inventory
 local ESX
-codecraft_lib = {}
+codecraft_lib = codecraft_lib or {}
 
 local function InventoryNotSetup()
     while true do 

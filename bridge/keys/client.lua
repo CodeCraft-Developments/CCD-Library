@@ -1,5 +1,5 @@
 local Keys
-codecraft_lib = {}
+codecraft_lib = codecraft_lib or {}
 
 local function VehKeysNotSetup()
     while true do 
@@ -31,7 +31,7 @@ elseif Config.VehicleKeys == "wasabi_carlock" then
 else
     VehKeysNotSetup()  
 end
-if Config.Debug then print("CLIENT PRINT VEHICLEKEYS ^2 If its a empty [] then its correct ^0") end
+if Config.Debug then print("CLIENT PRINT VEHICLEKEYS ^2" ..json.encode(Keys).. "^0") end
 
 exports("import", function()
     return codecraft_lib

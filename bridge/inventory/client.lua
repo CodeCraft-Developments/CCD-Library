@@ -1,9 +1,9 @@
 local Inventory
 local ESX
-codecraft_lib = {}
+codecraft_lib = codecraft_lib or {}
 
 local function InventoryNotSetup()
-    while true do 
+    while true do
         Wait(5000)
         print("Please Set You Config Properly in "..GetCurrentResourceName())
     end

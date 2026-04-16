@@ -1,6 +1,6 @@
 local Target
 local targetZones = {}
-codecraft_lib = {}
+codecraft_lib = codecraft_lib or {}
 
 if Config.Target == "auto" then
     if GetResourceState('ox_target') == 'started' then 
@@ -18,7 +18,7 @@ elseif Config.Target == "ox_target" then
 elseif Config.Target == "qb-target" then
     Target = exports['qb-target']
 end
-if Config.Debug then print("CLIENT PRINT TARGET "..json.encode(Target).."^2 If its a empty [] then its correct ^0") end
+if Config.Debug then print("CLIENT PRINT TARGET "..tostring(Target).."^2 If its a table (string of random shit) then its correct ^0") end
 
 function codecraft_lib.disableTargeting(state)
     if Config.Debug then print("IF TRUE THEN YOU CANT TARGET " ..json.encode(state)) end
@@ -132,7 +132,6 @@ AddEventHandler('onResourceStop', function(resource)
         if removed > 0 and Config.Debug then print('[DEBUG] - removed targets for:', resource) end
     end
 end)
-
 
 
 
