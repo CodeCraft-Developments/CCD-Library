@@ -41,8 +41,10 @@ function codecraft_lib.disableTargeting(state)
     end
     return state
 end
-function codecraft_lib.addBoxZone(name, coords, label, icon, distance, job, onSelect, itemreq, type, size, length, width, minZ, maxZ, heading, debug)
-    if Config.Debug then print(name, coords, label, icon, distance, job, onSelect, itemreq, type, size, length, width, minZ, maxZ, heading, debug) end
+function codecraft_lib.addBoxZone(name, coords, label, icon, distance, job, onSelect, itemreq, targetType, size, length, width, minZ, maxZ, heading, debug)
+    if Config.Debug then print(name, coords, label, icon, distance, job, onSelect, itemreq, targetType, size, length, width, minZ, maxZ, heading, debug) end
+    local action = type(onSelect) == 'function' and onSelect or nil
+    local event = type(onSelect) == 'string' and onSelect or nil
     if GetResourceState('ox_target') == 'started' then 
         Target:addBoxZone({
             coords = coords,
@@ -51,12 +53,15 @@ function codecraft_lib.addBoxZone(name, coords, label, icon, distance, job, onSe
             rotation = heading or 0,
             debug = debug or false,
             options = {
-                label = label or name, 
-                icon = icon or "fa-solid fa-file-circle-exclamation",
-                distance = distance or 1,
-                items = itemreq or false,
-                onSelect = onSelect,
-                groups = job or nil,
+                {
+                    label = label or name,
+                    icon = icon or "fa-solid fa-file-circle-exclamation",
+                    distance = distance or 1,
+                    items = itemreq or nil,
+                    onSelect = action,
+                    event = event,
+                    groups = job or nil,
+                },
             }
         })
     else
@@ -69,18 +74,19 @@ function codecraft_lib.addBoxZone(name, coords, label, icon, distance, job, onSe
             }, {
             options = {
                 {
-                    type = type,
+                    type = targetType,
                     icon = icon or "fa-solid fa-file-circle-exclamation",
                     label = label or name,
                     item = itemreq or false,
-                    action = onSelect,
+                    action = action,
+                    event = event,
                     job = job or false,
                 }
             },
             distance = distance or 1
         })
     end
-    table.insert(targetZones, { name = name, id = name, creator = GetInvokingResource() })
+    table.insert(targetZones, { name = name, id = name, kind = 'zone', creator = GetInvokingResource() })
 end
 
 function codecraft_lib.addLocalEntity(models, name, label, icon, distance, job, onSelect, itemreq, targetType)
@@ -89,15 +95,15 @@ function codecraft_lib.addLocalEntity(models, name, label, icon, distance, job, 
     local event = type(onSelect) == 'string' and onSelect or nil
     if GetResourceState('ox_target') == 'started' then 
         Target:addLocalEntity(models, {
-            options = {
-                label = label or name, 
+            {
+                label = label or name,
                 icon = icon or "fa-solid fa-file-circle-exclamation",
                 distance = distance or 1,
-                items = itemreq or false,
+                items = itemreq or nil,
                 onSelect = action,
                 event = event,
                 groups = job or nil,
-            }
+            },
         })
     else
         Target:AddTargetEntity(models, {
@@ -115,7 +121,7 @@ function codecraft_lib.addLocalEntity(models, name, label, icon, distance, job, 
             distance = distance or 1
         })
     end
-    table.insert(targetZones, { name = models, id = models, creator = GetInvokingResource() })
+    table.insert(targetZones, { name = models, id = models, kind = 'entity', creator = GetInvokingResource() })
 end
 
 AddEventHandler('onResourceStop', function(resource)
@@ -124,9 +130,17 @@ AddEventHandler('onResourceStop', function(resource)
         for _, target in pairs(targetZones) do
             if target.creator == resource then
                 if GetResourceState('ox_target') == 'started' then 
-                    Target:removeZone(target.id)
+                    if target.kind == 'entity' then
+                        Target:removeLocalEntity(target.id)
+                    else
+                        Target:removeZone(target.id)
+                    end
                 else
-                    Target:RemoveZone(target.id)
+                    if target.kind == 'entity' then
+                        Target:RemoveTargetEntity(target.id)
+                    else
+                        Target:RemoveZone(target.id)
+                    end
                 end
                 table.remove(targetZones, _)
                 removed = removed + 1
