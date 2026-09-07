@@ -58,7 +58,7 @@ function codecraft_lib.RemoveItem(src, item, amount)
         local xPlayer = Inventory.GetPlayerFromId(src)
         return xPlayer.removeInventoryItem(item, amount) 
     else
-        return Inventory:Removeitem(src, item, amount)
+        return Inventory:RemoveItem(src, item, amount)
     end
 end
 
@@ -99,7 +99,14 @@ function codecraft_lib.DoesItemExist(item)
         return false
     end
 
-    if GetResourceState('qb-core') == 'started' then
+    -- ox_inventory owns its item registry, even when it is being used with
+    -- QBCore or another framework. Check it before framework item tables.
+    if GetResourceState('ox_inventory') == 'started' then
+        local ok, itemInfo = pcall(function()
+            return exports.ox_inventory:Items(item)
+        end)
+        return ok and itemInfo ~= nil and itemInfo ~= false
+    elseif GetResourceState('qb-core') == 'started' then
         local QBCore = exports['qb-core']:GetCoreObject()
         return QBCore.Shared
             and QBCore.Shared.Items
@@ -109,11 +116,6 @@ function codecraft_lib.DoesItemExist(item)
             return exports.qbx_core:GetItems()
         end)
         return ok and items and items[item] ~= nil
-    elseif GetResourceState('ox_inventory') == 'started' then
-        local ok, itemInfo = pcall(function()
-            return exports.ox_inventory:Items(item)
-        end)
-        return ok and itemInfo ~= nil
     end
 
     return false
