@@ -1,6 +1,6 @@
 # Useable Functions to use and how to use them.
 
-### Dependencies are [ox_lib](https://github.com/CommunityOx/ox_lib) and [oxmysql](https://github.com/CommunityOx/oxmysql) (oxmysql is pre-installed with every framework)
+### Dependencies are [ox_lib](https://github.com/overextended/ox_lib) and [oxmysql](https://github.com/CommunityOx/oxmysql) (oxmysql is pre-installed with every framework)
 
 ## Make sure you import all the functions using
 
