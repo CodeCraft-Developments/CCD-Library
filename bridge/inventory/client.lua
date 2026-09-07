@@ -1,46 +1,60 @@
 local Inventory
-local ESX
 codecraft_lib = codecraft_lib or {}
 
-local function InventoryNotSetup()
+local function inventoryNotSetup()
     while true do
         Wait(5000)
-        print("Please Set You Config Properly in "..GetCurrentResourceName())
+        if Config.Debug then
+            print(("Please set your inventory configuration correctly in %s."):format(GetCurrentResourceName()))
+        end
     end
+end
+
+local function getInventoryAdapter(inventoryType)
+    if inventoryType == "ox_inventory" then
+        return exports.ox_inventory
+    elseif inventoryType == "qb-inventory" then
+        return exports["qb-inventory"]
+    elseif inventoryType == "ps-inventory" then
+        return exports["ps-inventory"]
+    elseif inventoryType == "esx_inventory" then
+        return exports["es_extended"]:getSharedObject()
+    end
+
+    return nil
 end
 
 if Config.Inventory == "auto" then
-    if GetResourceState('ox_inventory') == 'started' then 
-        Inventory = exports.ox_inventory
-    elseif GetResourceState('qb-inventory') == 'started' then
-        Inventory = exports['qb-inventory']
-    elseif GetResourceState('ps-inventory') == 'started' then
-        Inventory = exports['ps-inventory']
-    elseif GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
-        Inventory = ESX
-    else
-        InventoryNotSetup()
+    local supportedInventories = {
+        { resource = "ox_inventory", type = "ox_inventory" },
+        { resource = "qb-inventory", type = "qb-inventory" },
+        { resource = "ps-inventory", type = "ps-inventory" },
+        { resource = "es_extended", type = "esx_inventory" },
+    }
+
+    while not Inventory do
+        for _, inventory in ipairs(supportedInventories) do
+            if GetResourceState(inventory.resource) == "started" then
+                Inventory = getInventoryAdapter(inventory.type)
+                break
+            end
+        end
+
+        if not Inventory then
+            Wait(1000)
+        end
     end
-elseif Config.Inventory == "ox_inventory" then
-    Inventory = exports.ox_inventory
-elseif Config.Inventory == "qb-inventory" then
-    Inventory = exports['qb-inventory']
-elseif Config.Inventory == "ps-inventory" then
-    Inventory = exports['ps-inventory']
-elseif GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
-    Inventory = ESX
 else
-    InventoryNotSetup()
+    Inventory = getInventoryAdapter(Config.Inventory)
 end
 
-if Config.Debug then print("CLIENT PRINT INVENTORY "..json.encode(Inventory).."^2 If its a empty [] then its correct ^0") end
+if not Inventory then
+    inventoryNotSetup()
+end
 
-
-
-
-
-
-
+if Config.Debug then
+    print(("CLIENT PRINT INVENTORY %s^2 If it is an empty [] then it is correct.^0"):format(json.encode(Inventory)))
+end
 
 exports("import", function()
     return codecraft_lib

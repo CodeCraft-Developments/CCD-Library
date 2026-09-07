@@ -2,24 +2,25 @@ local Core
 codecraft_lib = codecraft_lib or {}
 
 if Config.CoreObj == "auto" then
-    if GetResourceState('qb-core') == 'started' then 
-        Core = exports['qb-core']:GetCoreObject()
-    elseif GetResourceState('qbx_core') == 'started' then
-        Core = exports.qbx_core
-    elseif GetResourceState('es_extended') == 'started' then
-        Core = "esx"
-    else
-        while true do 
-            Wait(5000)
-            print("Please Set The Config Properly in "..GetCurrentResourceName())
+    while true do
+        if GetResourceState('qb-core') == 'started' then 
+            Core = exports['qb-core']:GetCoreObject()
+            break
+        elseif GetResourceState('qbx_core') == 'started' then
+            Core = exports.qbx_core
+            break
+        elseif GetResourceState('es_extended') == 'started' then
+            Core = exports['es_extended']:getSharedObject()
+            break
         end
+        Wait(1000)
     end
-elseif Config.CoreObj == "qb-core" then
+elseif Config.CoreObj == "qbcore" then
     Core = exports['qb-core']:GetCoreObject()
 elseif Config.CoreObj == "qbx_core" then
     Core = exports.qbx_core
 elseif Config.CoreObj == "ESX" then
-    Core = "esx"
+    Core = exports['es_extended']:getSharedObject()
 end
 
 function codecraft_lib.Notify(msg, type, duration)

@@ -3,15 +3,15 @@ local targetZones = {}
 codecraft_lib = codecraft_lib or {}
 
 if Config.Target == "auto" then
-    if GetResourceState('ox_target') == 'started' then 
-        Target = exports.ox_target
-    elseif GetResourceState('qb-target') == 'started' then
-        Target = exports['qb-target']
-    else
-        while true do 
-            Wait(5000)
-            print("Please Set You Config Properly in "..GetCurrentResourceName())
+    while true do
+        if GetResourceState('ox_target') == 'started' then 
+            Target = exports.ox_target
+            break
+        elseif GetResourceState('qb-target') == 'started' then
+            Target = exports['qb-target']
+            break
         end
+        Wait(1000)
     end
 elseif Config.Target == "ox_target" then
     Target = exports.ox_target
@@ -83,8 +83,10 @@ function codecraft_lib.addBoxZone(name, coords, label, icon, distance, job, onSe
     table.insert(targetZones, { name = name, id = name, creator = GetInvokingResource() })
 end
 
-function codecraft_lib.addLocalEntity(models, name, label, icon, distance, job, onSelect, itemreq, type)
-    if Config.Debug then print(models, name, label, icon, distance, job, onSelect, itemreq, type) end
+function codecraft_lib.addLocalEntity(models, name, label, icon, distance, job, onSelect, itemreq, targetType)
+    if Config.Debug then print(models, name, label, icon, distance, job, onSelect, itemreq, targetType) end
+    local action = type(onSelect) == 'function' and onSelect or nil
+    local event = type(onSelect) == 'string' and onSelect or nil
     if GetResourceState('ox_target') == 'started' then 
         Target:addLocalEntity(models, {
             options = {
@@ -92,20 +94,21 @@ function codecraft_lib.addLocalEntity(models, name, label, icon, distance, job, 
                 icon = icon or "fa-solid fa-file-circle-exclamation",
                 distance = distance or 1,
                 items = itemreq or false,
-                onSelect = onSelect,
+                onSelect = action,
+                event = event,
                 groups = job or nil,
             }
         })
     else
         Target:AddTargetEntity(models, {
-            }, {
             options = {
                 {
-                    type = type,
+                    type = targetType,
                     icon = icon or "fa-solid fa-file-circle-exclamation",
                     label = label or name,
                     item = itemreq or false,
-                    action = onSelect,
+                    action = action,
+                    event = event,
                     job = job or false,
                 }
             },

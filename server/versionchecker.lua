@@ -1,5 +1,7 @@
 
 local checkVersion = function(err, response, headers)
+    if not Config.Debug then return end
+
     local versionNumber = response:match('version%s*[\'"]([%d%.]+)[\'"]')
     local resourceName = GetCurrentResourceName() -- the resource name
     local curVersion = GetResourceMetadata(GetCurrentResourceName(), 'version') -- make sure the "version" file actually exists in your resource root!

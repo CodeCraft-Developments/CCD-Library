@@ -27,8 +27,21 @@ Config.CoreObj = "auto" -- qbcore, qbx_core, ESX or auto
 
 Config.Inventory = "auto" -- ox_inventory, qb-inventory, esx_inventory, ps-inventory or auto
 
+-- Inventory image locations used by codecraft_lib.GetItemImage().
+-- Add or override a resource here if your inventory stores images elsewhere.
+Config.InventoryImagePaths = {
+    ['qb-inventory'] = { 'html/images/%s.png', 'html/images/%s.webp' },
+    ['ox_inventory'] = { 'web/images/%s.png', 'web/images/%s.webp' },
+    ['ps-inventory'] = { 'html/images/%s.png', 'html/images/%s.webp' },
+    ['lj-inventory'] = { 'html/images/%s.png', 'html/images/%s.webp' },
+    ['qs-inventory'] = { 'html/images/%s.png', 'html/images/%s.webp' },
+    ['core_inventory'] = { 'html/images/%s.png', 'html/images/%s.webp' },
+    ['codem-inventory'] = { 'html/images/%s.png', 'html/images/%s.webp' },
+    ['tgiann-inventory'] = { 'html/images/%s.png', 'html/images/%s.webp' },
+}
+
 Config.Target = "auto" -- ox_target, qb-target or auto
 
 Config.VehicleKeys = "auto" -- qb-vehiclekeys, qbx_vehiclekeys, Renewed-VehicleKeys, wasabi_carlock, jaksam_vehiclekeys or auto
 
-Config.Debug = false -- set to true if you want debug prints to be sent to the client and server
+Config.Debug = false -- set to true to enable CCD-Library and bridge debug output on client/server

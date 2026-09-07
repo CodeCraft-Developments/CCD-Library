@@ -4,7 +4,7 @@
 
 ## Make sure you import all the functions using
 
-- `local codecraft_lib = exports.CCD_Library:import()` at the top of your client and server scripts
+- `local codecraft_lib = exports['CCD-Library']:import()` at the top of your client and server scripts
 
 ## CoreObj Client
 
@@ -54,6 +54,8 @@
 - `codecraft_lib.AddItem(src, item, amount, metadata, slot, cb)`
 - `codecraft_lib.RemoveItem(src, item, amount)`
 - `codecraft_lib.HasItem(src, item, amount)`
+- `codecraft_lib.DoesItemExist(item)` Returns `true` when the item is registered in the active framework/inventory item table; otherwise returns `false`.
+- `codecraft_lib.GetItemImage(item)` Returns the active inventory's real item-image URL when one exists, otherwise `nil`. Supports configurable QB, OX, PS, and common inventory image paths.
 - `codecraft_lib.CreateStash(id, label, slots, maxWeight, group, coords)` id =  string or number
 - `codecraft_lib.forceOpenInventory(src, invType, plyID)` invType = 'player' or 'stash' or 'container'or 'drop' or 'glovebox' or 'trunk' or 'dumpster' MUST BE A STRING
 
