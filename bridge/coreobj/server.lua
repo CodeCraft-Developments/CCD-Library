@@ -26,6 +26,10 @@ elseif Config.CoreObj == "es_extended" then
     Core = ESX
 end
 
+---@param source integer
+---@param msg string
+---@param type? string
+---@param duration? number
 function codecraft_lib.Notify(source, msg, type, duration)
     if GetResourceState('ox_lib') == 'started' then
         local data = {
@@ -42,6 +46,7 @@ function codecraft_lib.Notify(source, msg, type, duration)
     end
 end
 
+---@param source integer
 function codecraft_lib.GetPlayer(source)
     if Config.Debug then print(source) end
     if GetResourceState('qb-core') == 'started' then
@@ -77,40 +82,54 @@ function codecraft_lib.getAllPlayers()
     end
 end
 
+---@param source integer
 function codecraft_lib.GetPlayerJob(source)
     if Config.Debug then print(source) end
     local Player = codecraft_lib.GetPlayerData(source)
     return Player.job
 end
 
+---@param source integer
+---@return string
 function codecraft_lib.GetPlayerJobName(source)
     local Player = codecraft_lib.GetPlayerData(source)
     return Player.job.name
 end
 
+---@param source integer
 function codecraft_lib.GetPlayerGang(source)
     if Config.Debug then print(source) end
     local Player = codecraft_lib.GetPlayerData(source)
     return Player.gang
 end
 
+---@param source integer
+---@return boolean
 function codecraft_lib.isBoss(source)
     if Config.Debug then print(source) end
     local player = codecraft_lib.GetPlayerJob(source)
     return player.isboss
 end
 
+---@param source source
+---@return vector3
 function codecraft_lib.getPlayerCoords(source)
     if Config.Debug then print(source) end
     return GetEntityCoords(GetPlayerPed(source))
 end
 
+---@param source integer
+---@return boolean
 function codecraft_lib.getJobDuty(source)
     if Config.Debug then print(source) end
     local player = codecraft_lib.GetPlayerJob(source)
     return player.onduty
 end
 
+---@param source integer
+---@param location vector3
+---@param distance number
+---@return boolean
 function codecraft_lib.checkDistance(source, location, distance)
     if Config.Debug then print(source, location, distance) end
     local pcoords = codecraft_lib.getEntityCoords(source)
@@ -118,6 +137,9 @@ function codecraft_lib.checkDistance(source, location, distance)
     return #(pcoords - location) <= distance
 end
 
+---@param source integer
+---@param metadataname string
+---@return string
 function codecraft_lib.GetMetaData(source, metadataname)
     if Config.Debug then print(source, metadataname) end
     if GetResourceState('qb-core') == 'started' then
@@ -130,6 +152,10 @@ function codecraft_lib.GetMetaData(source, metadataname)
     end
 end
 
+---@param source integer
+---@param metadata string
+---@param value any
+---@return nil
 function codecraft_lib.SetMetadata(source, metadata, value)
     if Config.Debug then print(source, metadata, value) end
     if GetResourceState('qb-core') == 'started' then
@@ -140,6 +166,8 @@ function codecraft_lib.SetMetadata(source, metadata, value)
     end
 end
 
+---@param source integer
+---@return string
 function codecraft_lib.GetIdentifierCID(source)
     if Config.Debug then print(source) end
     if GetResourceState('qb-core') == 'started' then
@@ -155,6 +183,10 @@ function codecraft_lib.GetIdentifierCID(source)
     end
 end
 
+---@param source integer
+---@param job string
+---@param amount number
+---@return integer
 function codecraft_lib.GetJobCount(source, job, amount)
     local amount = 0
     if GetResourceState('qb-core') == 'started' or GetResourceState('qbx_core') == 'started' then
@@ -173,6 +205,8 @@ function codecraft_lib.GetJobCount(source, job, amount)
     end
 end
 
+---@param source integer
+---@return string
 function codecraft_lib.hasJob(source)
 	if Config.Debug then print(source) end
     if GetResourceState('qb-core') == 'started' then
@@ -187,6 +221,9 @@ function codecraft_lib.hasJob(source)
     end
 end
 
+---@param source integer
+---@param moneytype? string
+---@param amount number
 function codecraft_lib.AddMoney(source, moneytype, amount)
 	if Config.Debug then print(source, moneytype, amount) end
     if GetResourceState('qb-core') == 'started' then
@@ -200,6 +237,9 @@ function codecraft_lib.AddMoney(source, moneytype, amount)
     end
 end
 
+---@param source integer
+---@param moneytype? string
+---@param amount number
 function codecraft_lib.RemoveMoney(source, moneytype, amount)
 	if Config.Debug then print(source, moneytype, amount) end
     if GetResourceState('qb-core') == 'started' then
@@ -213,6 +253,9 @@ function codecraft_lib.RemoveMoney(source, moneytype, amount)
     end
 end
 
+---@param source integer
+---@param type? string
+---@return number
 function codecraft_lib.getMoney(source, type)
 	if Config.Debug then print(source, type) end
     local player = codecraft_lib.GetPlayer(source)
@@ -220,6 +263,8 @@ function codecraft_lib.getMoney(source, type)
     return player.PlayerData.money[type] or 0
 end
 
+---@param licensePlate string
+---@return string
 function codecraft_lib.vehicleOwner(licensePlate)
 	if Config.Debug then print(licensePlate) end
     local vehicle = MySQL.query.await('SELECT * FROM player_vehicles WHERE plate = ?', {licensePlate})

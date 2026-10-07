@@ -41,6 +41,24 @@ function codecraft_lib.disableTargeting(state)
     end
     return state
 end
+
+---@param name string
+---@param coords vector3
+---@param label string
+---@param icon? string
+---@param distance? number
+---@param job? string
+---@param onSelect? function
+---@param event? string
+---@param itemreq? string
+---@param targetType? string
+---@param size? vector3
+---@param length? float
+---@param width? float
+---@param minZ? float
+---@param maxZ? float
+---@param heading? float
+---@param debug? boolean
 function codecraft_lib.addBoxZone(name, coords, label, icon, distance, job, onSelect, itemreq, targetType, size, length, width, minZ, maxZ, heading, debug)
     if Config.Debug then print(name, coords, label, icon, distance, job, onSelect, itemreq, targetType, size, length, width, minZ, maxZ, heading, debug) end
     local action = type(onSelect) == 'function' and onSelect or nil
@@ -89,6 +107,15 @@ function codecraft_lib.addBoxZone(name, coords, label, icon, distance, job, onSe
     table.insert(targetZones, { name = name, id = name, kind = 'zone', creator = GetInvokingResource() })
 end
 
+---@param models integer
+---@param name string
+---@param label? string
+---@param icon? string
+---@param distance? number
+---@param job? string
+---@param onSelect? function
+---@param itemreq? string
+---@param targetType? string
 function codecraft_lib.addLocalEntity(models, name, label, icon, distance, job, onSelect, itemreq, targetType)
     if Config.Debug then print(models, name, label, icon, distance, job, onSelect, itemreq, targetType) end
     local action = type(onSelect) == 'function' and onSelect or nil

@@ -42,6 +42,13 @@ end
 if Config.Debug then print("SERVER PRINT INVENTORY "..json.encode(Inventory).."^2 If its a empty [] then its correct ^0") end
 
 
+---@param src integer
+---@param item string
+---@param amount number
+---@param metadata? table<string, any>
+---@param slot? number
+---@param cb? function
+---@return any
 function codecraft_lib.AddItem(src, item, amount, metadata, slot, cb)
     if Config.Debug then print("codecraft_lib.AddItem() "..src, item, amount, metadata, slot, cb) end
     if GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
@@ -52,6 +59,10 @@ function codecraft_lib.AddItem(src, item, amount, metadata, slot, cb)
     end
 end
 
+---@param src integer
+---@param item string
+---@param amount number
+---@return any
 function codecraft_lib.RemoveItem(src, item, amount)
     if Config.Debug then print("codecraft_lib.RemoveItem() "..src, item, amount) end
     if GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
@@ -62,6 +73,10 @@ function codecraft_lib.RemoveItem(src, item, amount)
     end
 end
 
+---@param src integer
+---@param item string
+---@param amount? number
+---@return boolean
 function codecraft_lib.HasItem(src, item, amount)
     if Config.Debug then print("codecraft_lib.HasItem() "..src, item, amount) end
     if GetResourceState('ox_inventory') == 'started' then 
@@ -74,6 +89,13 @@ function codecraft_lib.HasItem(src, item, amount)
     end
 end
 
+---@param id string
+---@param label string
+---@param slots number
+---@param maxWeight number
+---@param group? string
+---@param coords? vector3
+---@return any
 function codecraft_lib.CreateStash(id, label, slots, maxWeight, group, coords)
     if Config.Debug then print("codecraft_lib.CreateStash() "..id, label, slots, maxWeight, group, coords) end
     if GetResourceState('ox_inventory') == 'started' then 
@@ -83,6 +105,10 @@ function codecraft_lib.CreateStash(id, label, slots, maxWeight, group, coords)
     end
 end
 
+---@param src integer
+---@param invType? string
+---@param plyID integer
+---@return any
 function codecraft_lib.forceOpenInventory(src, invType, plyID)
     if Config.Debug then print("codecraft_lib.forceOpenInventory() "..src, invType, plyID) end
     if GetResourceState('ox_inventory') == 'started' then 
@@ -94,6 +120,8 @@ end
 
 -- Checks whether an item is registered by the active framework/inventory.
 -- This prevents scripts from treating an unknown item as an inventory-space error.
+---@param item string
+---@return boolean
 function codecraft_lib.DoesItemExist(item)
     if type(item) ~= 'string' or item == '' then
         return false
@@ -123,6 +151,7 @@ end
 
 -- Returns the inventory's real item image as a browser-safe NUI URL.
 -- Returns nil when the active inventory does not contain a matching image.
+---@param item string
 function codecraft_lib.GetItemImage(item)
     if type(item) ~= 'string' or item == '' then
         return nil
@@ -181,6 +210,10 @@ function codecraft_lib.GetItemImage(item)
     return nil
 end
 
+---@param src integer
+---@param item string
+---@param action? string
+---@param amount? number
 function codecraft_lib.ItemBox(src, item, action, amount)
     if GetResourceState('qb-inventory') ~= 'started' then
         return false

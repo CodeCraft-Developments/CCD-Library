@@ -48,6 +48,8 @@ else
 end
 if Config.Debug then print("SERVER PRINT VEHICLEKEYS " ..json.encode(Keys).. "^2 If its a empty [] then its correct ^0") end
 
+---@param source integer
+---@param plate string
 function codecraft_lib.AddKeys(source, plate)
     if GetResourceState('qb-vehiclekeys') == 'started' then
         Keys:GiveKeys(source, plate)
@@ -62,6 +64,8 @@ function codecraft_lib.AddKeys(source, plate)
     end
 end
 
+---@param source integer
+---@param plate string
 function codecraft_lib.RemoveKeys(source, plate)
     if GetResourceState('qb-vehiclekeys') == 'started' then
         Keys:RemoveKeys(source, plate)

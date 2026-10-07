@@ -23,6 +23,9 @@ elseif Config.CoreObj == "ESX" then
     Core = exports['es_extended']:getSharedObject()
 end
 
+---@param msg string
+---@param type? string
+---@param duration? number
 function codecraft_lib.Notify(msg, type, duration)
     if GetResourceState('ox_lib') == 'started' then 
         lib.notify({ description = msg, type = type, position = 'top-right', duration = duration})
@@ -43,35 +46,43 @@ function codecraft_lib.GetPlayerData()
     end
 end
 
+---@return string
 function codecraft_lib.GetPlayerJob()
     local Player = codecraft_lib.GetPlayerData()
     return Player.job
 end
 
+---@return string|nil
 function codecraft_lib.GetPlayerJobName()
     local Player = codecraft_lib.GetPlayerData()
     return Player.job.name
 end
 
+---@return boolean
 function codecraft_lib.IsJobBoss()
     local job = codecraft_lib.GetPlayerJob()
     return job.isboss
 end
 
+---@return string
 function codecraft_lib.GetPlayerGang()
     local Player = codecraft_lib.GetPlayerData()
     return Player.gang.name
 end
 
+---@return boolean
 function codecraft_lib.IsGangLeader()
     local Player = codecraft_lib.GetPlayerData()
     return Player.gang.isboss
 end
 
+---@param meta string
+---@return any
 function codecraft_lib.GetMetadata(meta)
     return codecraft_lib.GetPlayerData().metadata[meta]
 end
 
+---@return string|nil
 function codecraft_lib.GetIdentifier()
     return codecraft_lib.GetPlayerData().citizenid
 end
@@ -80,10 +91,12 @@ function codecraft_lib.GetPlayer()
     return PlayerPedId()
 end
 
+---@return string
 function codecraft_lib.GetIdentifierCID()
     return codecraft_lib.GetPlayerData().cid
 end
 
+---@return boolean
 function codecraft_lib.isDead()
     if codecraft_lib.GetMetadata('isdead') or codecraft_lib.GetMetadata('inlaststand') then
         return true
@@ -92,6 +105,7 @@ function codecraft_lib.isDead()
     end
 end
 
+---@return vector3
 function codecraft_lib.getCoords()
     return GetEntityCoords(PlayerPedId())
 end

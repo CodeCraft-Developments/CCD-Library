@@ -10,6 +10,8 @@ local function inventoryNotSetup()
     end
 end
 
+---@param inventoryType string
+---@return table|nil
 local function getInventoryAdapter(inventoryType)
     if inventoryType == "ox_inventory" then
         return exports.ox_inventory
