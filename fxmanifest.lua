@@ -4,7 +4,7 @@ lua54 'yes'
 
 name "CCD_Library"
 author "CodeCraft Developments"
-version "1.1.0"
+version "1.1.1"
 description  "A library of functions and a bridge for CodeCraft Developments scripts"
 
 shared_script {
