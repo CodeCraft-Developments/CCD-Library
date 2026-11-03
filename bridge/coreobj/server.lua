@@ -30,17 +30,18 @@ end
 ---@param msg string
 ---@param type? string
 ---@param duration? number
-function codecraft_lib.Notify(source, msg, type, duration)
+---@param position? string
+function codecraft_lib.Notify(source, msg, type, duration, position)
     if GetResourceState('ox_lib') == 'started' then
         local data = {
             description = msg,
             type = type,
             duration = duration,
-            position = 'top-right'
+            position = 'top-right' or position
         }
         TriggerClientEvent('ox_lib:notify', source, data)
-    elseif GetResourceState('es_extended') == 'started' and not GetResourceState('ox_lib') == 'started' then
-        TriggerClientEvent("ESX:Notify", type or "info", duration or 5000, msg)
+    elseif GetResourceState('es_extended') == 'started' then
+        TriggerClientEvent("ESX:Notify", source, type or "info", duration or 5000, msg)
     else
         Core.Functions.Notify(source, msg, type, duration)
     end
@@ -61,22 +62,28 @@ function codecraft_lib.GetPlayer(source)
     end
 end
 
-function codecraft_lib.GetPlayerData()
-    if GetResourceState('qb-core') == 'started' then
-        return Core.Functions.GetPlayerData()
-    elseif GetResourceState('qbx_core') == 'started' then
-        return Core:GetPlayersData()
+---@param source integer
+---@return table|nil PlayerData (QB/QBX) or xPlayer (ESX)
+function codecraft_lib.GetPlayerData(source)
+    local Player = codecraft_lib.GetPlayer(source)
+    if not Player then return nil end
+    if GetResourceState('es_extended') == 'started' then
+        return Player
     end
+    return Player.PlayerData
+end
+
+-- ESX uses 'money' for cash; QB/QBX use 'cash'
+local function esxAccount(moneytype)
+    if not moneytype or moneytype == 'cash' then return 'money' end
+    return moneytype
 end
 
 function codecraft_lib.getAllPlayers()
     if GetResourceState('qb-core') == 'started' then
         return Core.Functions.GetQBPlayers()
     elseif GetResourceState('es_extended') == 'started' then
-        local xPlayers = Core.ExtendedPlayers()
-        for i, xPlayer in ipairs(xPlayers) do
-            return xPlayers
-        end
+        return Core.GetExtendedPlayers()
     elseif GetResourceState('qbx_core') == 'started' then
         return Core:GetQBPlayers()
     end
@@ -132,7 +139,7 @@ end
 ---@return boolean
 function codecraft_lib.checkDistance(source, location, distance)
     if Config.Debug then print(source, location, distance) end
-    local pcoords = codecraft_lib.getEntityCoords(source)
+    local pcoords = codecraft_lib.getPlayerCoords(source)
     local location = vector3(location.x, location.y, location.z)
     return #(pcoords - location) <= distance
 end
@@ -142,14 +149,12 @@ end
 ---@return string
 function codecraft_lib.GetMetaData(source, metadataname)
     if Config.Debug then print(source, metadataname) end
-    if GetResourceState('qb-core') == 'started' then
-        local source = Codecraft_lib.GetPlayerData(source)
-        local metadata = source.metadata
-        return metadataname
-    elseif GetResourceState('qbx_core') == 'started' then
-        local source = Core:GetMetadata(source, metadataname)
-        return metadataname
+    local Player = codecraft_lib.GetPlayerData(source)
+    if not Player then return nil end
+    if GetResourceState('es_extended') == 'started' then
+        return Player.getMeta(metadataname)
     end
+    return Player.metadata[metadataname]
 end
 
 ---@param source integer
@@ -163,6 +168,8 @@ function codecraft_lib.SetMetadata(source, metadata, value)
         Player.Functions.SetMetaData(metadata, value) 
     elseif GetResourceState('qbx_core') == 'started' then
         Core:SetMetadata(source, metadata, value)
+    elseif GetResourceState('es_extended') == 'started' then
+        codecraft_lib.GetPlayer(source).setMeta(metadata, value)
     end
 end
 
@@ -170,12 +177,9 @@ end
 ---@return string
 function codecraft_lib.GetIdentifierCID(source)
     if Config.Debug then print(source) end
-    if GetResourceState('qb-core') == 'started' then
-        local Player = Core.Functions.GetPlayer(source)
-        return Player.PlayerData.citizenid
-    elseif GetResourceState('qbx_core') == 'started' then
-        local PlayerCID = Core:GetPlayerByCitizenId(source)
-        return PlayerCID
+    if GetResourceState('qb-core') == 'started' or GetResourceState('qbx_core') == 'started' then
+        local Player = codecraft_lib.GetPlayerData(source)
+        return Player and Player.citizenid
     elseif GetResourceState('es_extended') == 'started' then
         local xPlayer = Core.GetPlayerFromId(source)
         local PlayerCID = xPlayer.getSSN()
@@ -190,7 +194,7 @@ end
 function codecraft_lib.GetJobCount(source, job, amount)
     local amount = 0
     if GetResourceState('qb-core') == 'started' or GetResourceState('qbx_core') == 'started' then
-        local players = Core.Functions.GetQBPlayers()
+        local players = codecraft_lib.getAllPlayers()
         for _, v in pairs(players) do
             if v and v.PlayerData.job.name == job then
                 amount = amount + 1
@@ -213,7 +217,8 @@ function codecraft_lib.hasJob(source)
         local Player = codecraft_lib.GetPlayerData(source)
         return Player.job
     elseif GetResourceState('qbx_core') == 'started' then
-        return Core:HasGroup(source)
+        local Player = codecraft_lib.GetPlayerData(source)
+        return Player.job
     elseif GetResourceState('es_extended') == 'started' then
         local xPlayer = codecraft_lib.GetPlayer(source)
         local jobs = xPlayer.getJob()
@@ -233,7 +238,7 @@ function codecraft_lib.AddMoney(source, moneytype, amount)
         Core:AddMoney(source, moneytype, amount)
     elseif GetResourceState('es_extended') == 'started' then
         local Player = codecraft_lib.GetPlayer(source)
-        Player.addMoney(amount)
+        Player.addAccountMoney(esxAccount(moneytype), amount)
     end
 end
 
@@ -249,7 +254,7 @@ function codecraft_lib.RemoveMoney(source, moneytype, amount)
         Core:RemoveMoney(source, moneytype, amount)
     elseif GetResourceState('es_extended') == 'started' then
         local Player = codecraft_lib.GetPlayer(source)
-        Player.removeMoney(amount)
+        Player.removeAccountMoney(esxAccount(moneytype), amount)
     end
 end
 
@@ -259,7 +264,12 @@ end
 function codecraft_lib.getMoney(source, type)
 	if Config.Debug then print(source, type) end
     local player = codecraft_lib.GetPlayer(source)
+    if not player then return 0 end
     if not type then type = 'cash' end
+    if GetResourceState('es_extended') == 'started' then
+        local account = player.getAccount(esxAccount(type))
+        return account and account.money or 0
+    end
     return player.PlayerData.money[type] or 0
 end
 

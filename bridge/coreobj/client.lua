@@ -12,6 +12,9 @@ if Config.CoreObj == "auto" then
         elseif GetResourceState('es_extended') == 'started' then
             Core = exports['es_extended']:getSharedObject()
             break
+        elseif GetResourceState('kora_core') == 'started' then
+            Core = exports['kora_core']
+            break
         end
         Wait(1000)
     end
@@ -21,6 +24,8 @@ elseif Config.CoreObj == "qbx_core" then
     Core = exports.qbx_core
 elseif Config.CoreObj == "ESX" then
     Core = exports['es_extended']:getSharedObject()
+elseif Config.CoreObj == "Kora" then
+    Core = exports['kora_core']
 end
 
 ---@param msg string
@@ -40,9 +45,11 @@ function codecraft_lib.GetPlayerData()
     if GetResourceState('qb-core') == 'started' then
         return Core.Functions.GetPlayerData()
     elseif GetResourceState('qbx_core') == 'started' then
-        return Core:GetPlayersData()
+        return Core:GetPlayerData()
     elseif GetResourceState('es_extended') == 'started' then
-        return Core.PlayerData
+        return Core.GetPlayerData()
+    elseif GetResourceState('kora_core') == 'started' then
+        return Core:getPlayerData()
     end
 end
 

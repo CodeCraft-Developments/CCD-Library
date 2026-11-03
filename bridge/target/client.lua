@@ -154,7 +154,9 @@ end
 AddEventHandler('onResourceStop', function(resource)
     if resource ~= GetCurrentResourceName() then
         local removed = 0
-        for _, target in pairs(targetZones) do
+        -- iterate backwards so table.remove doesn't skip the next entry
+        for index = #targetZones, 1, -1 do
+            local target = targetZones[index]
             if target.creator == resource then
                 if GetResourceState('ox_target') == 'started' then 
                     if target.kind == 'entity' then
@@ -169,7 +171,7 @@ AddEventHandler('onResourceStop', function(resource)
                         Target:RemoveZone(target.id)
                     end
                 end
-                table.remove(targetZones, _)
+                table.remove(targetZones, index)
                 removed = removed + 1
             end
         end

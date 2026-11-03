@@ -51,11 +51,14 @@ if Config.Debug then print("SERVER PRINT INVENTORY "..json.encode(Inventory).."^
 ---@return any
 function codecraft_lib.AddItem(src, item, amount, metadata, slot, cb)
     if Config.Debug then print("codecraft_lib.AddItem() "..src, item, amount, metadata, slot, cb) end
-    if GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
+    if GetResourceState('es_extended') == 'started' and GetResourceState('ox_inventory') ~= 'started' then
         local xPlayer = Inventory.GetPlayerFromId(src)
         return xPlayer.addInventoryItem(item, amount) 
-    else
+    elseif GetResourceState('ox_inventory') == 'started' then
         return Inventory:AddItem(src, item, amount, metadata, slot, cb)
+    else
+        -- qb/ps-inventory take slot before info: AddItem(identifier, item, amount, slot, info, reason)
+        return Inventory:AddItem(src, item, amount, slot, metadata, GetInvokingResource() or 'CCD-Library')
     end
 end
 
@@ -65,7 +68,7 @@ end
 ---@return any
 function codecraft_lib.RemoveItem(src, item, amount)
     if Config.Debug then print("codecraft_lib.RemoveItem() "..src, item, amount) end
-    if GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
+    if GetResourceState('es_extended') == 'started' and GetResourceState('ox_inventory') ~= 'started' then
         local xPlayer = Inventory.GetPlayerFromId(src)
         return xPlayer.removeInventoryItem(item, amount) 
     else
@@ -81,9 +84,10 @@ function codecraft_lib.HasItem(src, item, amount)
     if Config.Debug then print("codecraft_lib.HasItem() "..src, item, amount) end
     if GetResourceState('ox_inventory') == 'started' then 
         return Inventory:GetItemCount(src, item, amount)
-    elseif GetResourceState('es_extended') == 'started' and not GetResourceState('ox_inventory') == 'started' then
+    elseif GetResourceState('es_extended') == 'started' and GetResourceState('ox_inventory') ~= 'started' then
         local xPlayer = Inventory.GetPlayerFromId(src)
-        return xPlayer.getInventoryItem(item)
+        local invItem = xPlayer.getInventoryItem(item)
+        return invItem ~= nil and invItem.count >= (amount or 1)
     else
         return Inventory:HasItem(src, item, amount)
     end
@@ -101,7 +105,7 @@ function codecraft_lib.CreateStash(id, label, slots, maxWeight, group, coords)
     if GetResourceState('ox_inventory') == 'started' then 
         return Inventory:RegisterStash(id, label, slots, maxWeight, group, coords)
     else
-        return Inventory:CreateInventory(id, label, maxWeight, slots)
+        return Inventory:CreateInventory(id, { label = label, maxweight = maxWeight, slots = slots })
     end
 end
 
@@ -113,8 +117,10 @@ function codecraft_lib.forceOpenInventory(src, invType, plyID)
     if Config.Debug then print("codecraft_lib.forceOpenInventory() "..src, invType, plyID) end
     if GetResourceState('ox_inventory') == 'started' then 
         return Inventory:forceOpenInventory(src, invType, plyID)
-    else
+    elseif invType == 'player' or not invType then
         return Inventory:OpenInventoryById(src, plyID)
+    else
+        return Inventory:OpenInventory(src, tostring(plyID))
     end
 end
 
